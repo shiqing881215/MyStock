@@ -1,0 +1,132 @@
+<html>
+	<head>
+		<title>MyStock</title>
+		<script type="text/javascript" src="standalone-framework.src.js"></script>
+		<script type="text/javascript" src="highcharts.src.js"></script>
+		<script type="text/javascript" src="jquery-1.11.3.js"></script>
+	</head>
+
+	<body>
+
+		<div id="charts"></div>
+
+		<script type="text/javascript">
+			$.ajax({
+				url: 'http://localhost:3000/yahooFinance',
+				success: function(data, statusCode, jqXHR) {
+					debugger;
+					console.log(data);
+					var polishedData = polishData(data);
+					prepareChartPlaceholder(polishedData.length);
+					drawChart(polishedData);
+				},
+				error: function(jqXHR, statusCode, e) {
+					console.log(e);
+				}
+			});
+
+			/*
+			 rawData is like
+			 [  
+			   [  
+			      {  
+			         "date":"2015-05-01T07:00:00.000Z",
+			         "open":79.24,
+			         "high":79.76,
+			         "low":78.11,
+			         "close":78.99,
+			         "volume":22783300,
+			         "adjClose":78.99,
+			         "symbol":"FB"
+			      }
+			   ],
+			   [  
+			      {  
+			         "date":"2015-05-01T07:00:00.000Z",
+			         "open":73.37,
+			         "high":74.5,
+			         "low":72,
+			         "close":73.36,
+			         "volume":9189500,
+			         "adjClose":73.36,
+			         "symbol":"CRM"
+			      }
+			   ]
+			]
+
+			 And polish data should be like
+			 [  
+			   {
+				 'symbol' : 'CRM',
+				 'price' : '75, 74, 76'
+			   }, 
+			   {
+				 'symbol' : 'FB',
+				 'price' : '73, 74, 76'
+			   }
+			 ]
+			 */
+			function polishData(rawData) {
+				debugger;
+				polishedData = [];
+				rawData.forEach(function(stockDetail) {
+					if (stockDetail.length > 0) {
+						var singlePolishData = {
+							symbol : stockDetail[0]['symbol'],
+							price : []
+						}
+						stockDetail.forEach(function(singleDayDetail) {
+							singlePolishData['price'].push(singleDayDetail['close']);
+						})
+
+						polishedData.push(singlePolishData);
+					}
+				});
+
+				return polishedData;
+			}
+
+			function drawChart(data) {
+				debugger;
+				data.forEach(function(symbolDetail, index) {
+					new Highcharts.Chart({
+			            chart: {
+			                renderTo: "chart"+index
+			            },
+			            legend: {
+			                enabled: true
+			            },
+			            plotOptions: {
+			                series: {
+			                    marker: {
+			                        enabled: true
+			                    },
+			                    shadow: true
+			                }
+			            },
+			            series: [{
+			                data: symbolDetail['price']
+			            }],
+			            title: {
+			                text: symbolDetail['symbol']
+			            },
+			            tooltip: {
+			                enabled: true
+			            }
+			        });
+				});
+			}
+
+			function prepareChartPlaceholder(numberOfChart) {
+				debugger;
+				var charts = document.getElementById('charts');
+				for (var i = 0; i < numberOfChart; i++) {
+					var p = document.createElement('p');
+					p.setAttribute('id', 'chart'+i);
+					charts.appendChild(p);
+				}
+			}
+		</script>
+	</body>
+
+</html>
