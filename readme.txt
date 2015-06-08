@@ -10,4 +10,4 @@
    Instead, in your express response, write the hearder by adding 'Access-Control-Allow-Origin : *' and Content-Type : application/json.
 4. For get the Date, use the moment js - https://github.com/abritinthebay/datejs. (Try to use Datejs first, seems not working well)   
 
-https://cloud.githubusercontent.com/assets/2434215/8039555/7358a45e-0dbf-11e5-814f-8586be000290.png
+<img src="https://cloud.githubusercontent.com/assets/2434215/8039555/7358a45e-0dbf-11e5-814f-8586be000290.png"/>
