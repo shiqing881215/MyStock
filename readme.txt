@@ -2,7 +2,7 @@
    https://github.com/pilwon/node-yahoo-finance
 2. Use node-inspector you can debug the node in your chrome
    https://github.com/node-inspector/node-inspector
-3. User Express.js to set up the web container for Node.js, so you can set a RESTFUL service
+3. User Express.js http://expressjs.com/ to set up the web container for Node.js, so you can set a RESTFUL service
    in which way you can set the data from node.js back to client side
    One thing to note is when you use the jQuery to do the ajax call, if you meet "Access-Control-Allow-Origin" issue,
    usually the way you did is set dataType as "jsonp" in your jQeury ajax call. But here, if we want to get the json
