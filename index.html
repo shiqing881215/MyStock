@@ -23,10 +23,12 @@
 		</div>
 
 
-		<div id="charts"></div>
+		<div id="charts" style="display:flex; flex-wrap:wrap;"></div>
 
 		<script type="text/javascript">
+			// Default show 1 week
 			var currentActiveTab = 'tab7';
+			showStockChart(7);
 
 			function showStockChart(numOfDays) {
 				// Clear the existing chart first
@@ -143,9 +145,10 @@
 			function prepareChartPlaceholder(numberOfChart) {
 				var charts = document.getElementById('charts');
 				for (var i = 0; i < numberOfChart; i++) {
-					var p = document.createElement('p');
-					p.setAttribute('id', 'chart'+i);
-					charts.appendChild(p);
+					var div = document.createElement('div');
+					div.setAttribute('id', 'chart'+i);
+					div.setAttribute('style', 'width:50%;');
+					charts.appendChild(div);
 				}
 			}
 		</script>
