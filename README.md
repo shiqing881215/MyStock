@@ -11,6 +11,8 @@ Show multiple stock chart on one page
    usually the way you did is set dataType as "jsonp" in your jQeury ajax call. But here, if we want to get the json
    back from our express container, don't set the json dataType which will confuse jQuery and make it throw parseError.
    Instead, in your express response, write the hearder by adding 'Access-Control-Allow-Origin : *' and Content-Type : application/json.
-4. For get the Date, use the moment js - https://github.com/abritinthebay/datejs. (Try to use Datejs first, seems not working well)   
+4. For get the Date, use the moment js - https://github.com/abritinthebay/datejs. (Try to use Datejs first, seems not working well)   <br/><br/>
+ 
+Check out this video on Youtube also https://www.youtube.com/watch?v=rscMcq8KaWw  <br/><br/><br/>
 
 ![alt tag](https://cloud.githubusercontent.com/assets/2434215/8039555/7358a45e-0dbf-11e5-814f-8586be000290.png)
