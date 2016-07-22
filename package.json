@@ -1,0 +1,33 @@
+{
+  "name": "stock",
+  "version": "1.0.0",
+  "description": "A centeral place to show your interested stocks",
+  "main": "/",
+  "dependencies": {
+    "datejs": "^1.0.0-rc3",
+    "yahoo-finance": "^0.2.11",
+    "moment": "^2.10.3",
+    "express": "^4.12.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shiqing881215/MyStock.git"
+  },
+  "keywords": [
+    "stock"
+  ],
+  "author": "Qing Shi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shiqing881215/MyStock/issues"
+  },
+  "homepage": "https://github.com/shiqing881215/MyStock#readme",
+  "engines": {
+    "node": "6.2.2"
+  }
+}

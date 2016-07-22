@@ -1,6 +1,7 @@
 var yahooFinance = require('yahoo-finance');
 var express = require('express');
 var moment = require('moment');
+var path = require('path');
 
 var app = express();
 
@@ -20,6 +21,12 @@ for (i = 0; i < PERIOD.length; i++) {
 		getStockHistoricalPrice(SYMBOLS[j], PERIOD[i]);	
 	} 
 }
+
+// Set up the index page
+app.get('/', function(req, res){
+	res.sendFile(path.join(__dirname + '/index.html'));
+});
+console.log('Index page is ready to use');
 
 app.listen(3000);
 console.log('Server start on 3000');
@@ -49,7 +56,6 @@ function getStockHistoricalPrice(symbol, numOfDays) {
 			    res.json(allQuotes[numOfDays.toString()]);
 			});
 			console.log('Endpoint : /yahooFinance/' + numOfDays + ' is ready to use');
-
 		}
 	});
 }
