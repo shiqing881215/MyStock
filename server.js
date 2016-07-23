@@ -8,7 +8,8 @@ var yahooFinance = require('yahoo-finance'),
 var app = express();
 
 var SYMBOLS = ['CRM','SCTY','APPL','AMZN','BABA','EA','FB','GOOG','GRPN','HDP','LNKD','MSFT','TWTR','YHOO','BIDU','JD','TECHY','SOHU','SINA','QIHU','NETS'];
-var PERIOD = [7,30,90,180,365,730];
+// var PERIOD = [7,30,90,180,365,730];
+var PERIOD = [7];
 
 // Initialize 
 var allDone = {}, allQuotes = {};
