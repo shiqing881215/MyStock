@@ -39,12 +39,12 @@ app.set('port', (process.env.PORT || 5000));
 
 console.log('__dirname is : ' + __dirname);
 console.log('join is : ' + path.join(__dirname + '/server.key'));
-console.log('READ DATA ********************* ' + fs.readFileSync('server.key'));
 
 https.createServer({
   key: fs.readFileSync('server.key'),
   cert: fs.readFileSync('server.crt')
 }, app).listen(app.get('port'));
+console.log('app listening on port ' + app.get('port') + '...........................................');
 
 function getStockHistoricalPrice(symbol, numOfDays) {
 	yahooFinance.historical({
