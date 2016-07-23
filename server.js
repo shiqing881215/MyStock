@@ -37,8 +37,8 @@ app.set('port', (process.env.PORT || 5000));
 // });
 
 https.createServer({
-  key: fs.readFileSync('./server.key'),
-  cert: fs.readFileSync('./server.crt')
+  key: fs.readFileSync(__dirname + '/server.key'),
+  cert: fs.readFileSync(__dirname + '/server.crt')
 }, app).listen(app.get('port'));
 
 function getStockHistoricalPrice(symbol, numOfDays) {
