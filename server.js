@@ -1,7 +1,9 @@
-var yahooFinance = require('yahoo-finance');
-var express = require('express');
-var moment = require('moment');
-var path = require('path');
+var yahooFinance = require('yahoo-finance'),
+    express = require('express'),
+    moment = require('moment'),
+    path = require('path'),
+    fs = require('fs'), 
+    https = require('https');
 
 var app = express();
 
@@ -28,10 +30,16 @@ app.get('/', function(req, res){
 });
 console.log('Index page is ready to use');
 
+// This is necessary for deploying to Heroku
 app.set('port', (process.env.PORT || 5000));
-app.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
-});
+// app.listen(app.get('port'), function() {
+//   console.log('Node app is running on port', app.get('port'));
+// });
+
+https.createServer({
+  key: fs.readFileSync('server.key'),
+  cert: fs.readFileSync('server.crt')
+}, app).listen(app.get('port'));
 
 function getStockHistoricalPrice(symbol, numOfDays) {
 	yahooFinance.historical({
