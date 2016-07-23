@@ -9,7 +9,7 @@ var app = express();
 
 var SYMBOLS = ['CRM','SCTY','APPL','AMZN','BABA','EA','FB','GOOG','GRPN','HDP','LNKD','MSFT','TWTR','YHOO','BIDU','JD','TECHY','SOHU','SINA','QIHU','NETS'];
 // var PERIOD = [7,30,90,180,365,730];
-var PERIOD = [];
+var PERIOD = [7];
 
 // Initialize 
 var allDone = {}, allQuotes = {};
@@ -18,12 +18,12 @@ for (i = 0; i < PERIOD.length; i++) {
 	allQuotes[PERIOD[i].toString()] = [];
 }
 
-// for (i = 0; i < PERIOD.length; i++) {
-// 	for (j = 0; j < SYMBOLS.length; j++) {
-// 		// Note this is async call and we don't wait the response back
-// 		getStockHistoricalPrice(SYMBOLS[j], PERIOD[i]);	
-// 	} 
-// }
+for (i = 0; i < PERIOD.length; i++) {
+	for (j = 0; j < SYMBOLS.length; j++) {
+		// Note this is async call and we don't wait the response back
+		getStockHistoricalPrice(SYMBOLS[j], PERIOD[i]);	
+	} 
+}
 
 // Set up the index page
 app.get('/', function(req, res){
@@ -33,18 +33,18 @@ console.log('Index page is ready to use');
 
 // This is necessary for deploying to Heroku
 app.set('port', (process.env.PORT || 5000));
-// app.listen(app.get('port'), function() {
-//   console.log('Node app is running on port', app.get('port'));
-// });
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
+});
 
 console.log('__dirname is : ' + __dirname);
 console.log('join is : ' + path.join(__dirname + '/server.key'));
 
-https.createServer({
-  key: fs.readFileSync('server.key'),
-  cert: fs.readFileSync('server.crt')
-}, app).listen(app.get('port'));
-console.log('app listening on port ' + app.get('port') + '...........................................');
+// https.createServer({
+//   key: fs.readFileSync('server.key'),
+//   cert: fs.readFileSync('server.crt')
+// }, app).listen(app.get('port'));
+// console.log('app listening on port ' + app.get('port') + '...........................................');
 
 function getStockHistoricalPrice(symbol, numOfDays) {
 	yahooFinance.historical({
