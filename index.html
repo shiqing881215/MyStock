@@ -35,7 +35,7 @@
 				$('#charts').empty();
 
 				$.ajax({
-					url: 'https://localhost:48520/yahooFinance/' + numOfDays,
+					url: '/yahooFinance/' + numOfDays,
 					success: function(data, statusCode, jqXHR) {
 						console.log(data);
 						var polishedData = polishData(data);
