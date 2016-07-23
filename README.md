@@ -1,5 +1,6 @@
 # MyStock
 Show multiple stock chart on one page
+Now it's also holding on Heroku at https://stock-shiqing.herokuapp.com/
 
 1. Use Node.js to set up the server to do the yahoo finance api call
    https://github.com/pilwon/node-yahoo-finance
