@@ -18,12 +18,12 @@ for (i = 0; i < PERIOD.length; i++) {
 	allQuotes[PERIOD[i].toString()] = [];
 }
 
-for (i = 0; i < PERIOD.length; i++) {
-	for (j = 0; j < SYMBOLS.length; j++) {
-		// Note this is async call and we don't wait the response back
-		getStockHistoricalPrice(SYMBOLS[j], PERIOD[i]);	
-	} 
-}
+// for (i = 0; i < PERIOD.length; i++) {
+// 	for (j = 0; j < SYMBOLS.length; j++) {
+// 		// Note this is async call and we don't wait the response back
+// 		getStockHistoricalPrice(SYMBOLS[j], PERIOD[i]);	
+// 	} 
+// }
 
 // Set up the index page
 app.get('/', function(req, res){
