@@ -143,7 +143,7 @@
 			                renderTo: "chart"+index
 			            },
 			            legend: {
-			                enabled: true
+			                enabled: false
 			            },
 			            plotOptions: {
 			                series: {
@@ -155,6 +155,9 @@
 			            },
 			            xAxis: {
 				            categories: symbolDetail['date']
+				        },
+				        yAxis: {
+				        	title: {text: 'Price'}
 				        },
 			            series: [{
 			                data: symbolDetail['price']

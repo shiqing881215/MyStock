@@ -1,12 +1,14 @@
 var yahooFinance = require('yahoo-finance'),
     express = require('express'),
     moment = require('moment'),
-    path = require('path');
+    path = require('path'),
+    fs = require('fs');
 
 var app = express();
 
-var SYMBOLS = ['CRM','SCTY','APPL','AMZN','BABA','EA','FB','GOOG','GRPN','HDP','LNKD','MSFT','TWTR','YHOO','BIDU','JD','TECHY','SOHU','SINA','QIHU','NETS'];
-var PERIOD = [7,30,90,180,365,730];
+var obj = JSON.parse(fs.readFileSync('config.txt', 'utf8'));
+var SYMBOLS = obj['symbols'],
+    PERIOD = obj['period'];
 
 // Initialize 
 var allDone = {}, allQuotes = {};
@@ -19,6 +21,7 @@ for (i = 0; i < PERIOD.length; i++) {
 	for (j = 0; j < SYMBOLS.length; j++) {
 		// Note this is async call and we don't wait the response back
 		getStockHistoricalPrice(SYMBOLS[j], PERIOD[i]);	
+		// console.log('Get price : ************  ' + SYMBOLS[j] + ' for period ' + PERIOD[i]);
 	} 
 }
 
@@ -40,6 +43,8 @@ function getStockHistoricalPrice(symbol, numOfDays) {
 		to: moment().format().slice(0,10)
 		// period: 'd'  // 'd' (daily), 'w' (weekly), 'm' (monthly), 'v' (dividends only)
 	}, function (err, quotes) {
+		if (err) { throw err; }
+
 		// console.log(quotes);
 		allDone[numOfDays.toString()]++;
 		// console.log(allDone + " : " + symbol + " : " + numOfDays);
