@@ -53,11 +53,21 @@
 			}
 
 			/*
-			 rawData is like
+			 rawData format
 			 [  
 			   [  
 			      {  
 			         "date":"2015-05-01T07:00:00.000Z",
+			         "open":79.24,
+			         "high":79.76,
+			         "low":78.11,
+			         "close":78.99,
+			         "volume":22783300,
+			         "adjClose":78.99,
+			         "symbol":"FB"
+			      },
+			      {  
+			         "date":"2015-05-02T07:00:00.000Z",
 			         "open":79.24,
 			         "high":79.76,
 			         "low":78.11,
@@ -77,19 +87,31 @@
 			         "volume":9189500,
 			         "adjClose":73.36,
 			         "symbol":"CRM"
+			      },
+			      {  
+			         "date":"2015-05-02T07:00:00.000Z",
+			         "open":73.37,
+			         "high":74.5,
+			         "low":72,
+			         "close":73.36,
+			         "volume":9189500,
+			         "adjClose":73.36,
+			         "symbol":"CRM"
 			      }
 			   ]
 			]
 
-			 And polish data should be like
+			 And polish data format
 			 [  
 			   {
 				 'symbol' : 'CRM',
-				 'price' : '75, 74, 76'
+				 'price' : '75, 74, 76',
+				 'data' : '2015-05-01, 2015-05-02'
 			   }, 
 			   {
 				 'symbol' : 'FB',
-				 'price' : '73, 74, 76'
+				 'price' : '73, 74, 76',
+				 'data' : '2015-05-01, 2015-05-02'
 			   }
 			 ]
 			 */
@@ -99,10 +121,12 @@
 					if (stockDetail.length > 0) {
 						var singlePolishData = {
 							symbol : stockDetail[0]['symbol'],
-							price : []
+							price : [],
+							date : []
 						}
 						stockDetail.forEach(function(singleDayDetail) {
 							singlePolishData['price'].push(singleDayDetail['close']);
+							singlePolishData['date'].push(singleDayDetail['date'].slice(0,10));
 						})
 
 						polishedData.push(singlePolishData);
@@ -129,6 +153,9 @@
 			                    shadow: true
 			                }
 			            },
+			            xAxis: {
+				            categories: symbolDetail['date']
+				        },
 			            series: [{
 			                data: symbolDetail['price']
 			            }],
