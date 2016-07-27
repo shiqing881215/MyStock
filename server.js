@@ -4,8 +4,6 @@ var yahooFinance = require('yahoo-finance'),
     path = require('path'),
     fs = require('fs');
 
-var app = express();
-
 var obj = JSON.parse(fs.readFileSync('config.txt', 'utf8'));
 var SYMBOLS = obj['symbols'],
     PERIOD = obj['period'];
@@ -21,10 +19,10 @@ for (i = 0; i < PERIOD.length; i++) {
 	for (j = 0; j < SYMBOLS.length; j++) {
 		// Note this is async call and we don't wait the response back
 		getStockHistoricalPrice(SYMBOLS[j], PERIOD[i]);	
-		// console.log('Get price : ************  ' + SYMBOLS[j] + ' for period ' + PERIOD[i]);
 	} 
 }
 
+var app = express();
 // Set up the index page
 app.get('/', function(req, res){
 	res.sendFile(path.join(__dirname + '/index.html'));
@@ -33,7 +31,7 @@ app.get('/', function(req, res){
 // This is necessary for deploying to Heroku
 app.set('port', (process.env.PORT || 5000));
 app.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
+    console.log('Node app is running on port', app.get('port'));
 });
 
 function getStockHistoricalPrice(symbol, numOfDays) {

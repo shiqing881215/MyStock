@@ -1,4 +1,4 @@
 {
-	"symbols" : ["CRM","AAPL","FB","NFLX"],
+    "symbols" : ["CRM","AAPL","FB","NFLX"],
     "period" : [7,30,90,180,365,730]
 }
