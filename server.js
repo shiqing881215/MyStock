@@ -6,7 +6,7 @@ var yahooFinance = require('yahoo-finance'),
 
 // Global variables 
 var SYMBOLS, PERIOD, ALL_DONE = {}, ALL_QUOTES = {};
-getConfig();
+initialize();
 
 var app = express();
 // Set up the index page
@@ -29,8 +29,8 @@ app.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
 });
 
-function getConfig() {
-	mongodb.MongoClient.connect(/*process.env.MONGODB_URI*/ 'mongodb://heroku_6dd18181:g92sngel63pgrsinuuenf6fee9@ds031915.mlab.com:31915/heroku_6dd18181', function(err, db) {
+function initialize() {
+	mongodb.MongoClient.connect(process.env.MONGODB_URI, function(err, db) {
   
 		if(err) throw err;
 
@@ -114,8 +114,9 @@ function saveNewSymbol(newSymbol, req, res) {
 				db.close(function (err) {
 	                if(err) throw err;
 
-	                // Send 200 code back 
+	                // Send 200 code back and redraw
 	                res.sendStatus(200);
+	                initialize();
 	            });
 			}
 		);

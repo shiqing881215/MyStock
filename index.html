@@ -6,10 +6,12 @@
 		<script src="https://code.highcharts.com/highcharts.src.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.js"></script>
 	</head>
 
 	<body>
 
+		<div id="spinner"></div>
 		<div class="container">
 		  <h3>My Stock</h3>
 		  <div class="col-lg-6">
@@ -34,6 +36,22 @@
 		<div id="charts" style="display:flex; flex-wrap:wrap;"></div>
 
 		<script type="text/javascript">
+			$('#spinner').hide();
+
+			var spinner = new Spinner({
+				lines: 12, // The number of lines to draw
+				length: 7, // The length of each line
+				width: 5, // The line thickness
+				radius: 10, // The radius of the inner circle
+				color: '#337ab7', // #rbg or #rrggbb
+				speed: 1, // Rounds per second
+				trail: 100, // Afterglow percentage
+				shadow: true, // Whether to render a shadow
+				zIndex: 100
+			}).spin(document.getElementById("spinner"));
+
+
+
 			// Default show 1 week
 			var currentActiveTab = 'tab7';
 			showStockChart(7);
@@ -194,12 +212,17 @@
 			// CRUD stuff
 
 			function addSymbol () {
-				debugger;
+				$('#spinner').show();
 				$.ajax({
 					url: '/addSymbol?symbol=' + $('#newSymbol').val(),
 					success: function(data, statusCode, jqXHR) {
 						console.log('Success to post data');
 						$('#newSymbol').val('');
+						// Hack here, wait for 2.5 seconds and refresh the page
+						setTimeout(function() {
+							$('#spinner').hide();
+							location.reload();
+						}, 2500);
 					},
 					error: function(jqXHR, statusCode, e) {
 						console.log(e);
