@@ -5,36 +5,37 @@ var yahooFinance = require('yahoo-finance'),
     mongodb = require('mongodb');;
 
 // Global variables 
-var SYMBOLS, PERIOD, ALL_DONE = {}, ALL_QUOTES = {};
+var SYMBOLS, PERIOD, ALL_DONE = {}, ALL_QUOTES = {}, MONGODB_URI = process.env.MONGODB_URI;
 initialize();
 
 var app = express();
-// Set up the index page
-app.get('/', function(req, res){
-	initialize();
-	res.sendFile(path.join(__dirname + '/index.html'));
-});
-app.get('/index.js', function(req, res){
-	res.sendFile(path.join(__dirname + '/index.js'));
-});
+setUpRestEndPoints(app);
 
-// Set a sample post endpoint
-app.get('/addSymbol', function(req, res){
-	var symbol = req.param('symbol');
-	console.log('Get new symbol : ' + symbol);
-
-	saveNewSymbol(symbol.toUpperCase(), req, res);
-
-});
-
-// This is necessary for deploying to Heroku
+// This is necessary for deploying to Heroku cause port is dynamically allocated each time
 app.set('port', (process.env.PORT || 5000));
 app.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
 });
 
+// ---------------------- helper methods ------------------------------ //
+
+function setUpRestEndPoints(app) {
+	app.get('/', function(req, res){
+		initialize();
+		res.sendFile(path.join(__dirname + '/index.html'));
+	});
+	app.get('/index.js', function(req, res){
+		res.sendFile(path.join(__dirname + '/index.js'));
+	});
+	app.get('/addSymbol', function(req, res){
+		var symbol = req.param('symbol');
+		console.log('Get new symbol : ' + symbol);
+		saveNewSymbol(symbol.toUpperCase(), req, res);
+	});
+}
+
 function initialize() {
-	mongodb.MongoClient.connect(process.env.MONGODB_URI, function(err, db) {
+	mongodb.MongoClient.connect(/*process.env.MONGODB_URI*/'mongodb://heroku_6dd18181:g92sngel63pgrsinuuenf6fee9@ds031915.mlab.com:31915/heroku_6dd18181', function(err, db) {
   
 		if(err) throw err;
 
@@ -95,7 +96,7 @@ function saveNewSymbol(newSymbol, req, res) {
 	console.log("ADD NEW SYMBOL ************** " + newSymbol);
 	// Follow this to generate this MONGODB_URI to your app
 	// https://devcenter.heroku.com/articles/mongolab#connecting-to-existing-mlab-deployments-from-heroku
-	mongodb.MongoClient.connect(process.env.MONGODB_URI, function(err, db) {
+	mongodb.MongoClient.connect(/*process.env.MONGODB_URI*/ 'mongodb://heroku_6dd18181:g92sngel63pgrsinuuenf6fee9@ds031915.mlab.com:31915/heroku_6dd18181', function(err, db) {
   
 		if(err) throw err;
 		  
