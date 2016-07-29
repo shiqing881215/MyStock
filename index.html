@@ -12,7 +12,15 @@
 
 		<div class="container">
 		  <h3>My Stock</h3>
-		  <ul class="nav nav-tabs">
+		  <div class="col-lg-6">
+			  <div class="input-group">
+			    <input type="text" class="form-control" placeholder="Add Symbol" id="newSymbol">
+			    <span class="input-group-btn">
+			      <button class="btn btn-default" type="button" onclick="addSymbol()">Add</button>
+			    </span>
+			  </div>
+		  </div>
+		  <ul class="nav nav-tabs" style="float:left; padding-top:1rem">
 		    <li class="active" id="tab7"><a onclick="showStockChart(7)">One Week</a></li>
 		    <li id="tab30"><a onclick="showStockChart(30)">One Month</a></li>
 		    <li id="tab90"><a onclick="showStockChart(90)">Three Months</a></li>
@@ -180,6 +188,22 @@
 					div.setAttribute('style', 'width:50%;');
 					charts.appendChild(div);
 				}
+			}
+
+
+			// CRUD stuff
+
+			function addSymbol () {
+				debugger;
+				$.ajax({
+					url: '/addSymbol?symbol=' + $('#newSymbol').val(),
+					success: function(data, statusCode, jqXHR) {
+						console.log('Success to post data');
+					},
+					error: function(jqXHR, statusCode, e) {
+						console.log(e);
+					}
+				});
 			}
 		</script>
 	</body>

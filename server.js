@@ -2,7 +2,8 @@ var yahooFinance = require('yahoo-finance'),
     express = require('express'),
     moment = require('moment'),
     path = require('path'),
-    fs = require('fs');
+    fs = require('fs'),
+    mongodb = require('mongodb');;
 
 var obj = JSON.parse(fs.readFileSync('config.txt', 'utf8'));
 var SYMBOLS = obj['symbols'],
@@ -26,6 +27,16 @@ var app = express();
 // Set up the index page
 app.get('/', function(req, res){
 	res.sendFile(path.join(__dirname + '/index.html'));
+});
+
+// Set a sample post endpoint
+app.get('/addSymbol', function(req, res){
+	var symbol = req.param('symbol');
+	console.log('Get new symbol : ' + symbol);
+
+	// Sample db stuff
+	saveNewSymbol(symbol.toUpperCase());
+
 });
 
 // This is necessary for deploying to Heroku
@@ -62,5 +73,36 @@ function getStockHistoricalPrice(symbol, numOfDays) {
 			});
 			console.log('Endpoint : /yahooFinance/' + numOfDays + ' is ready to use');
 		}
+	});
+}
+
+
+function saveNewSymbol(newSymbol) {
+	console.log("ADD NEW SYMBOL ************** " + newSymbol);
+	mongodb.MongoClient.connect(process.env.MONGODB_URI, function(err, db) {
+  
+		if(err) throw err;
+		  
+		/*
+		 * The db should be like 
+		 * {
+		 *   symbols : [xx,xx,xx,newSymbol]
+		 *   period : [xx,xx,xx,xx]
+		 * }
+		 */
+		var stockConfig = db.collection('stockConfig');
+
+		// Add new symbol to existing symbols list
+		stockConfig.update(
+			{ name : 'stockConfig'},
+			{ $push : { symbols : newSymbol} },
+			function (err, result) {
+				if(err) throw err;
+
+				db.close(function (err) {
+	                if(err) throw err;
+	            });
+			}
+		);
 	});
 }
