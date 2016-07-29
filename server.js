@@ -11,7 +11,11 @@ initialize();
 var app = express();
 // Set up the index page
 app.get('/', function(req, res){
+	initialize();
 	res.sendFile(path.join(__dirname + '/index.html'));
+});
+app.get('/index.js', function(req, res){
+	res.sendFile(path.join(__dirname + '/index.js'));
 });
 
 // Set a sample post endpoint
