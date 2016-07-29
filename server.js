@@ -27,6 +27,9 @@ function setUpRestEndPoints(app) {
 	app.get('/index.js', function(req, res){
 		res.sendFile(path.join(__dirname + '/index.js'));
 	});
+	app.get('/admin', function(req, res){
+		res.sendFile(path.join(__dirname + '/admin.html'));
+	});
 	app.get('/addSymbol', function(req, res){
 		var symbol = req.param('symbol');
 		console.log('Get new symbol : ' + symbol);
@@ -112,7 +115,7 @@ function saveNewSymbol(newSymbol, req, res) {
 		// Add new symbol to existing symbols list
 		stockConfig.update(
 			{ name : 'stockConfig'},
-			{ $push : { symbols : newSymbol} },
+			{ $addToSet : { symbols : newSymbol} },
 			function (err, result) {
 				if(err) throw err;
 
