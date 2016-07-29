@@ -199,9 +199,11 @@
 					url: '/addSymbol?symbol=' + $('#newSymbol').val(),
 					success: function(data, statusCode, jqXHR) {
 						console.log('Success to post data');
+						$('#newSymbol').val('');
 					},
 					error: function(jqXHR, statusCode, e) {
 						console.log(e);
+						$('#newSymbol').val('');
 					}
 				});
 			}

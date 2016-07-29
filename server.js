@@ -2,26 +2,11 @@ var yahooFinance = require('yahoo-finance'),
     express = require('express'),
     moment = require('moment'),
     path = require('path'),
-    fs = require('fs'),
     mongodb = require('mongodb');;
 
-var obj = JSON.parse(fs.readFileSync('config.txt', 'utf8'));
-var SYMBOLS = obj['symbols'],
-    PERIOD = obj['period'];
-
-// Initialize 
-var allDone = {}, allQuotes = {};
-for (i = 0; i < PERIOD.length; i++) {
-	allDone[PERIOD[i].toString()] = 0;
-	allQuotes[PERIOD[i].toString()] = [];
-}
-
-for (i = 0; i < PERIOD.length; i++) {
-	for (j = 0; j < SYMBOLS.length; j++) {
-		// Note this is async call and we don't wait the response back
-		getStockHistoricalPrice(SYMBOLS[j], PERIOD[i]);	
-	} 
-}
+// Global variables 
+var SYMBOLS, PERIOD, ALL_DONE = {}, ALL_QUOTES = {};
+getConfig();
 
 var app = express();
 // Set up the index page
@@ -34,8 +19,7 @@ app.get('/addSymbol', function(req, res){
 	var symbol = req.param('symbol');
 	console.log('Get new symbol : ' + symbol);
 
-	// Sample db stuff
-	saveNewSymbol(symbol.toUpperCase());
+	saveNewSymbol(symbol.toUpperCase(), req, res);
 
 });
 
@@ -44,6 +28,33 @@ app.set('port', (process.env.PORT || 5000));
 app.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
 });
+
+function getConfig() {
+	mongodb.MongoClient.connect(/*process.env.MONGODB_URI*/ 'mongodb://heroku_6dd18181:g92sngel63pgrsinuuenf6fee9@ds031915.mlab.com:31915/heroku_6dd18181', function(err, db) {
+  
+		if(err) throw err;
+
+		// Add new symbol to existing symbols list
+		db.collection('stockConfig').find({name : 'stockConfig'}).toArray(function(err, configs) {
+			// Initialize global variables
+			var config = configs[0];
+			SYMBOLS = config['symbols'];
+	    	PERIOD = config['period'];
+
+			for (i = 0; i < PERIOD.length; i++) {
+				ALL_DONE[PERIOD[i].toString()] = 0;
+				ALL_QUOTES[PERIOD[i].toString()] = [];
+			}
+
+			for (i = 0; i < PERIOD.length; i++) {
+				for (j = 0; j < SYMBOLS.length; j++) {
+					// Note this is async call and we don't wait the response back
+					getStockHistoricalPrice(SYMBOLS[j], PERIOD[i]);	
+				} 
+			}
+		});
+	});
+}
 
 function getStockHistoricalPrice(symbol, numOfDays) {
 	yahooFinance.historical({
@@ -55,21 +66,20 @@ function getStockHistoricalPrice(symbol, numOfDays) {
 		if (err) { throw err; }
 
 		// console.log(quotes);
-		allDone[numOfDays.toString()]++;
-		// console.log(allDone + " : " + symbol + " : " + numOfDays);
+		ALL_DONE[numOfDays.toString()]++;
 		if (quotes) {
-			allQuotes[numOfDays.toString()].push(quotes);
+			ALL_QUOTES[numOfDays.toString()].push(quotes);
 		}
 
 		// After get all symbol price then set up the Express
-		if (allDone[numOfDays] == SYMBOLS.length) {
+		if (ALL_DONE[numOfDays] == SYMBOLS.length) {
 			app.get('/yahooFinance/' + numOfDays, function(req, res){
 				// Define the required header. Important
 				res.setHeader('Content-Type', 'application/json');
 				res.setHeader('Access-Control-Allow-Origin', '*');
 			    
 			    // Send back the data
-			    res.json(allQuotes[numOfDays.toString()]);
+			    res.json(ALL_QUOTES[numOfDays.toString()]);
 			});
 			console.log('Endpoint : /yahooFinance/' + numOfDays + ' is ready to use');
 		}
@@ -77,8 +87,10 @@ function getStockHistoricalPrice(symbol, numOfDays) {
 }
 
 
-function saveNewSymbol(newSymbol) {
+function saveNewSymbol(newSymbol, req, res) {
 	console.log("ADD NEW SYMBOL ************** " + newSymbol);
+	// Follow this to generate this MONGODB_URI to your app
+	// https://devcenter.heroku.com/articles/mongolab#connecting-to-existing-mlab-deployments-from-heroku
 	mongodb.MongoClient.connect(process.env.MONGODB_URI, function(err, db) {
   
 		if(err) throw err;
@@ -101,6 +113,9 @@ function saveNewSymbol(newSymbol) {
 
 				db.close(function (err) {
 	                if(err) throw err;
+
+	                // Send 200 code back 
+	                res.sendStatus(200);
 	            });
 			}
 		);
