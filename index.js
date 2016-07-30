@@ -1,9 +1,8 @@
-var currentActiveTab;
+var currentActiveTab, customDays;
 
 function initialize() {
 	$('#spinner').hide();
 
-	debugger;
 	var spinner = new Spinner({
 		lines: 12, // The number of lines to draw
 		length: 7, // The length of each line
@@ -39,7 +38,11 @@ function showStockChart(numOfDays) {
 	});
 
 	$('#' + currentActiveTab).removeClass('active');
-	currentActiveTab = 'tab' + numOfDays;
+	if ([7,30,90,365,730].indexOf(numOfDays) == -1) {
+		currentActiveTab = 'tabCustom'
+	} else {
+		currentActiveTab = 'tab' + numOfDays;	
+	}
 	$('#' + currentActiveTab).addClass('active');
 }
 
@@ -173,15 +176,12 @@ function prepareChartPlaceholder(numberOfChart) {
 	}
 }
 
-
-// CRUD stuff
-
-function addSymbol () {
+function addSymbol() {
 	$('#spinner').show();
 	$.ajax({
 		url: '/addSymbol?symbol=' + $('#newSymbol').val(),
 		success: function(data, statusCode, jqXHR) {
-			console.log('Success to post data');
+			console.log('Success add new symbol');
 			$('#newSymbol').val('');
 			// Hack here, wait for 2.5 seconds and refresh the page
 			setTimeout(function() {
@@ -192,6 +192,30 @@ function addSymbol () {
 		error: function(jqXHR, statusCode, e) {
 			console.log(e);
 			$('#newSymbol').val('');
+		}
+	});
+}
+
+function addCustomDays() {
+	customDays = parseInt($('#customDays').val());
+	$('#spinner').show();
+	$.ajax({
+		url: '/addCustomDays?days=' + $('#customDays').val(),
+		success: function(data, statusCode, jqXHR) {
+			console.log('Success add new days');
+			$('#customDays').val('');
+			// Hack here, wait for 2.5 seconds and refresh the page
+			setTimeout(function() {
+				$('#spinner').hide();
+				$('#tabCustomLink').click(function() {showStockChart(customDays)});
+				debugger;
+				$('#tabCustomLink').text(customDays + " days");
+				$('#tabCustom').css('visibility', 'visible');
+			}, 2500);
+		},
+		error: function(jqXHR, statusCode, e) {
+			console.log(e);
+			$('#customDays').val('');
 		}
 	});
 }

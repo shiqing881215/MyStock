@@ -5,6 +5,8 @@ var yahooFinance = require('yahoo-finance'),
     mongodb = require('mongodb');;
 
 // Global variables 
+// Follow this to generate this MONGODB_URI to your app
+// https://devcenter.heroku.com/articles/mongolab#connecting-to-existing-mlab-deployments-from-heroku
 var SYMBOLS, PERIOD, ALL_DONE = {}, ALL_QUOTES = {}, MONGODB_URI = process.env.MONGODB_URI;
 initialize();
 
@@ -35,10 +37,15 @@ function setUpRestEndPoints(app) {
 		console.log('Get new symbol : ' + symbol);
 		saveNewSymbol(symbol.toUpperCase(), req, res);
 	});
+	app.get('/addCustomDays', function(req, res){
+		var days = req.param('days');
+		console.log('Get new days : ' + days);
+		saveNewDays(parseInt(days), req, res);
+	});
 }
 
 function initialize() {
-	mongodb.MongoClient.connect(/*process.env.MONGODB_URI*/'mongodb://heroku_6dd18181:g92sngel63pgrsinuuenf6fee9@ds031915.mlab.com:31915/heroku_6dd18181', function(err, db) {
+	mongodb.MongoClient.connect(MONGODB_URI, function(err, db) {
   
 		if(err) throw err;
 
@@ -94,12 +101,9 @@ function getStockHistoricalPrice(symbol, numOfDays) {
 	});
 }
 
-
 function saveNewSymbol(newSymbol, req, res) {
 	console.log("ADD NEW SYMBOL ************** " + newSymbol);
-	// Follow this to generate this MONGODB_URI to your app
-	// https://devcenter.heroku.com/articles/mongolab#connecting-to-existing-mlab-deployments-from-heroku
-	mongodb.MongoClient.connect(/*process.env.MONGODB_URI*/ 'mongodb://heroku_6dd18181:g92sngel63pgrsinuuenf6fee9@ds031915.mlab.com:31915/heroku_6dd18181', function(err, db) {
+	mongodb.MongoClient.connect(MONGODB_URI, function(err, db) {
   
 		if(err) throw err;
 		  
@@ -116,6 +120,40 @@ function saveNewSymbol(newSymbol, req, res) {
 		stockConfig.update(
 			{ name : 'stockConfig'},
 			{ $addToSet : { symbols : newSymbol} },
+			function (err, result) {
+				if(err) throw err;
+
+				db.close(function (err) {
+	                if(err) throw err;
+
+	                // Send 200 code back and redraw
+	                res.sendStatus(200);
+	                initialize();
+	            });
+			}
+		);
+	});
+}
+
+function saveNewDays(newDays, req, res) {
+	console.log("ADD NEW DAYS ************** " + newDays);
+	mongodb.MongoClient.connect(MONGODB_URI, function(err, db) {
+  
+		if(err) throw err;
+		  
+		/*
+		 * The db should be like 
+		 * {
+		 *   symbols : [xx,xx,xx]
+		 *   period : [xx,xx,xx,xx, newDays]
+		 * }
+		 */
+		var stockConfig = db.collection('stockConfig');
+
+		// Add new days to existing period list
+		stockConfig.update(
+			{ name : 'stockConfig'},
+			{ $set : { period : [7,30,90,365,730,newDays]} },
 			function (err, result) {
 				if(err) throw err;
 
